@@ -51,7 +51,21 @@ export const actions = {
 
       dispatch('getTransactionsCount')
       dispatch('getAllTransactions')
+      dispatch('watchAccountChanges')
     }
+  },
+  async watchAccountChanges() {
+    const hasEthereum = await dispatch('checkForEthereum')
+
+    if (!hasEthereum)
+      return alert('No web3? You should consider trying MetaMask!')
+
+    window.ethereum.on('accountsChanged', function (accounts) {
+      if (accounts.length) {
+        alert('accountsChanged')
+        commit('setAccount', accounts[0])
+      }
+    })
   },
   async connectWallet({ commit, dispatch }) {
     const hasEthereum = await dispatch('checkForEthereum')
@@ -68,6 +82,7 @@ export const actions = {
         commit('setAccount', accounts[0])
         dispatch('getTransactionsCount')
         dispatch('getAllTransactions')
+        dispatch('watchAccountChanges')
       } else {
         alert('No accounts found')
       }
