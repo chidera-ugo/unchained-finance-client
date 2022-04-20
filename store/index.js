@@ -134,6 +134,7 @@ export const actions = {
 
       const transactionsCount = await transactionContract.getTransactionCount()
       commit('setTransactionsCount', transactionsCount.toNumber())
+      alert('Transaction sent successfully')
       location.reload()
     } catch (e) {
       console.log(e)
