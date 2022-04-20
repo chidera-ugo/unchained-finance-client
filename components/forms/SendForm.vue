@@ -34,11 +34,11 @@
       />
     </label>
 
-    <button v-if="account" type="submit" class="mt-4">
+    <button v-if="account" type="submit" class="mt-4 w-32">
       <span v-if="loading">
         <svg
           fill="none"
-          class="w-4 h-4 text-white animate-spin"
+          class="w-4 h-4 text-white animate-spin mx-auto"
           viewBox="0 0 24 24"
         >
           <circle

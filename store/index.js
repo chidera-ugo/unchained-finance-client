@@ -7,6 +7,8 @@ export const state = () => {
     loading: false,
     transactionsCount: 0,
     transactions: [],
+    transactionsCountLoading: false,
+    transactionsLoading: false,
   }
 }
 
@@ -22,6 +24,12 @@ export const mutations = {
   },
   setTransactions(state, transactions) {
     state.transactions = transactions
+  },
+  setTransactionsCountLoading(state, loading) {
+    state.transactionsCountLoading = loading
+  },
+  setTransactionsLoading(state, loading) {
+    state.transactionsLoading = loading
   },
 }
 
@@ -40,10 +48,10 @@ export const actions = {
 
     if (accounts.length) {
       commit('setAccount', accounts[0])
-    }
 
-    dispatch('getTransactionsCount')
-    dispatch('getAllTransactions')
+      dispatch('getTransactionsCount')
+      dispatch('getAllTransactions')
+    }
   },
   async connectWallet({ commit, dispatch }) {
     const hasEthereum = await dispatch('checkForEthereum')
@@ -58,11 +66,21 @@ export const actions = {
 
       if (accounts.length) {
         commit('setAccount', accounts[0])
+        dispatch('getTransactionsCount')
+        dispatch('getAllTransactions')
       } else {
         alert('No accounts found')
       }
     } catch (e) {
-      alert("Couldn't connect to wallet")
+      console.log(e)
+
+      if (e.code === -32002) {
+        alert(
+          'A permission request is already pending, please find the tab and approve the request'
+        )
+      } else {
+        alert("Couldn't connect to wallet")
+      }
     }
   },
   getEthereumContract() {
@@ -82,6 +100,8 @@ export const actions = {
       if (!hasEthereum)
         return alert('No web3? You should consider trying MetaMask!')
 
+      commit('setLoading', true)
+
       const transactionContract = await dispatch('getEthereumContract')
       const { addressTo, amount, message, keyword } = payload
 
@@ -99,8 +119,6 @@ export const actions = {
         ],
       })
 
-      console.log('Transaction sent')
-
       const transactionHash = await transactionContract.addToBlockChain(
         addressTo,
         parsedAmount,
@@ -108,7 +126,6 @@ export const actions = {
         keyword
       )
 
-      commit('setLoading', true)
       console.log(`Loading transaction hash: ${transactionHash.hash}`)
       await transactionHash.wait()
 
@@ -120,6 +137,8 @@ export const actions = {
       location.reload()
     } catch (e) {
       console.log(e)
+      commit('setLoading', false)
+
       if (e.code === 4001) {
         alert('User rejected transaction')
       } else {
@@ -133,12 +152,15 @@ export const actions = {
 
       if (!hasEthereum)
         return alert('No web3? You should consider trying MetaMask!')
+      commit('setTransactionsCountLoading', true)
 
       const transactionContract = await dispatch('getEthereumContract')
       const transactionsCount = await transactionContract.getTransactionCount()
       const parsedCount = parseInt(transactionsCount._hex, 16)
       commit('setTransactionsCount', parsedCount)
+      commit('setTransactionsCountLoading', false)
     } catch (e) {
+      commit('setTransactionsCountLoading', false)
       console.log(e)
       alert("Couldn't check if transactions exist")
     }
@@ -149,6 +171,7 @@ export const actions = {
 
       if (!hasEthereum)
         return alert('No web3? You should consider trying MetaMask!')
+      commit('setTransactionsLoading', true)
 
       const transactionContract = await dispatch('getEthereumContract')
       const availableTransactions =
@@ -172,8 +195,10 @@ export const actions = {
         }
       )
       commit('setTransactions', structuredTransactions)
+      commit('setTransactionsLoading', false)
     } catch (e) {
       console.log(e)
+      commit('setTransactionsLoading', false)
       alert("Couldn't fetch all transactions")
     }
   },
