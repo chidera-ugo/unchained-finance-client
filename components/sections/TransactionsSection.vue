@@ -52,7 +52,12 @@ import { mapState } from 'vuex'
 
 export default Vue.extend({
   computed: {
-    ...mapState(['transactionsCount', 'transactions', 'transactionsLoading']),
+    ...mapState([
+      'transactionsCount',
+      'transactions',
+      'transactionsLoading',
+      'transactionsCountLoading',
+    ]),
   },
 })
 </script>
