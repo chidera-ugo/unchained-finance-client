@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  body {
+    @apply bg-gray-900 lowercase;
+  }
+
+  .x-between {
+    @apply flex align-middle justify-between;
+  }
+
+  a {
+    @apply text-gray-400 hover:underline;
+  }
+
+  .nav-link {
+    @apply p-3;
+  }
+
+  button {
+    @apply bg-fuchsia-500 py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 h-10 !important;
+  }
+
+  h1 {
+    @apply font-bold text-2xl text-gray-400;
+  }
+
+  p {
+    @apply text-gray-500 text-sm lg:text-base;
+  }
+
+  label {
+    @apply mt-6 text-gray-400;
+  }
+
+  input {
+    @apply mb-2 border border-gray-600 p-2 block mt-2 w-full bg-gray-800 placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-emerald-400;
+  }
+}
