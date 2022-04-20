@@ -1,5 +1,5 @@
 <template>
-  <div class="px-6 md:px-8 py-32">
+  <div class="px-6 md:px-8 py-24 md:py-32">
     <div class="max-w-[1200px] mx-auto">
       <Nuxt />
     </div>
